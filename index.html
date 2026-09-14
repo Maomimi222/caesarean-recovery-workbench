@@ -1,14 +1,600 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="refresh" content="0;url=%E5%89%A5%E8%85%B9%E4%BA%A7%E6%81%A2%E5%A4%8D%E6%89%93%E5%8D%A1%E5%B7%A5%E4%BD%9C%E5%8F%B0.html">
-<title>正在打开 · 剖腹产恢复打卡工作台</title>
+<html lang="zh-CN" data-page-node-id="T2Sjs17kRNl3Bn7Qhka0hZ">
+<head data-page-node-id="LJaWHKhVfFgvVJ6ZgtUkaa">
+<meta charset="UTF-8" data-page-node-id="heyhELuCuEhZdDbQZ72GvO">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" data-page-node-id="zNM2kITDEbWCrgFfpuWFEo">
+<title>剖腹产恢复 · 每日打卡工作台</title>
+<style>
+  :root{
+    --ink:#16242f; --sub:#5b6b7b; --line:#e7ecf1; --bg:#eef3f8;
+    --brand:#1f6f8b; --brand2:#2c9bc0; --brand-soft:#e6f3f8;
+    --ok:#2f9e6f; --ok-soft:#e7f7ef;
+    --warn:#d97706; --warn-soft:#fff4e2;
+    --gold:#c08a2d; --gold-soft:#fdf3df;
+    --shadow:0 6px 22px rgba(20,40,60,.08);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
+    line-height:1.55;font-size:15px}
+  .wrap{max-width:680px;margin:0 auto;padding:14px 14px calc(40px + env(safe-area-inset-bottom))}
+
+  /* ---------- 顶部 Hero ---------- */
+  header{position:relative;background:linear-gradient(135deg,#1f6f8b,#2c9bc0 70%,#48b6d4);
+    color:#fff;border-radius:var(--radius);padding:18px 18px 16px;box-shadow:var(--shadow);overflow:hidden}
+  header::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;
+    background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);border-radius:50%}
+  header h1{margin:0;font-size:20px;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+  header h1 .em{font-size:22px}
+  header p{margin:6px 0 0;font-size:12.5px;opacity:.92}
+  .hero-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .hp{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);
+    border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;backdrop-filter:blur(2px)}
+  .hp.gold{background:var(--gold-soft);border-color:#e7c574;color:#7a5410}
+
+  /* ---------- 今日概览卡 ---------- */
+  .overview{background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px;margin:-10px 8px 0;box-shadow:var(--shadow);position:relative;z-index:2;
+    display:flex;align-items:center;gap:16px}
+  .ring-wrap{flex:0 0 auto;width:96px;height:96px;position:relative}
+  .ring{transform:rotate(-90deg)}
+  .ring-bg{fill:none;stroke:#e8eef3;stroke-width:11}
+  .ring-fg{fill:none;stroke:url(#g1);stroke-width:11;stroke-linecap:round;
+    stroke-dasharray:326.726;stroke-dashoffset:326.726;transition:stroke-dashoffset .5s ease}
+  .ring-fg.done{stroke:#2f9e6f}
+  .ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-txt b{font-size:22px;color:var(--ink);line-height:1}
+  .ring-txt span{font-size:10.5px;color:var(--sub);margin-top:2px}
+  .ov-stats{flex:1;display:flex;flex-direction:column;gap:7px;min-width:0}
+  .ov-row{display:flex;align-items:center;gap:8px;font-size:13.5px}
+  .ov-row .k{color:var(--sub);flex:0 0 auto}
+  .ov-row .v{font-weight:700;color:var(--ink)}
+  .ov-row .v.ok{color:var(--ok)}
+  .chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;
+    border-radius:999px;padding:3px 10px}
+  .chip.ok{background:var(--ok-soft);color:var(--ok)}
+  .chip.warn{background:var(--warn-soft);color:var(--warn)}
+  .chip.gold{background:var(--gold-soft);color:var(--gold)}
+
+  /* ---------- 通用卡片 ---------- */
+  .sec{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-top:12px;box-shadow:var(--shadow)}
+  .sec h2{font-size:15px;margin:0 0 8px;color:var(--brand);display:flex;align-items:center;gap:7px}
+  .sec h2 .n{display:inline-flex;align-items:center;justify-content:center;background:var(--brand);
+    color:#fff;width:22px;height:22px;border-radius:7px;font-size:12px;font-weight:700}
+
+  /* ---------- 日期控制 ---------- */
+  .controls{margin-top:12px}
+  .controls .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .controls label{font-size:12.5px;color:var(--sub);font-weight:600}
+  .controls input[type=date]{border:1px solid #cbd5e0;border-radius:9px;padding:7px 9px;font-size:14px;color:var(--ink);background:#fff}
+  .link{color:var(--brand);font-size:12.5px;cursor:pointer;font-weight:600}
+  .link:hover{text-decoration:underline}
+
+  /* ---------- 阶段步进条 ---------- */
+  .switch{display:flex;gap:6px;margin-top:12px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  .switch::-webkit-scrollbar{display:none}
+  .switch button{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:10px;
+    padding:7px 11px;font-size:12.5px;cursor:pointer;color:var(--sub);font-weight:600;transition:.2s;white-space:nowrap}
+  .switch button:hover{border-color:var(--brand)}
+  .switch button.active{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(31,111,139,.3)}
+
+  /* ---------- 产检提醒 ---------- */
+  .remind{background:linear-gradient(135deg,#fff8e7,#fffaf1);border:1px solid #f0c674;margin-top:12px}
+  .remind h2{color:var(--gold)}
+  .remind h2 .n{background:var(--gold)}
+  .rlist{margin:6px 0 0;padding-left:20px}
+  .rlist li{font-size:13px;margin:4px 0;color:var(--ink)}
+
+  /* ---------- 任务 ---------- */
+  .gtitle{font-size:13px;font-weight:700;color:var(--ink);margin:13px 0 5px;padding-left:9px;
+    border-left:3px solid var(--brand);display:flex;align-items:center;gap:6px}
+  .gtitle .tag{font-size:10.5px;font-weight:700;color:var(--gold);background:var(--gold-soft);
+    border-radius:6px;padding:1px 6px}
+  .item{display:flex;gap:11px;align-items:flex-start;padding:9px 4px;border-bottom:1px dashed #eef1f4}
+  .item:last-child{border-bottom:none}
+  .item input{appearance:none;-webkit-appearance:none;margin-top:2px;width:22px;height:22px;flex:0 0 auto;
+    border:2px solid #cdd6df;border-radius:7px;cursor:pointer;position:relative;transition:.15s;background:#fff}
+  .item input:checked{background:var(--ok);border-color:var(--ok)}
+  .item input:checked::after{content:"";position:absolute;left:7px;top:3px;width:5px;height:10px;
+    border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+  .item .t{font-size:14px;line-height:1.45}
+  .item.done .t{color:var(--sub);text-decoration:line-through;text-decoration-color:#bcd}
+  .item .note{font-size:11.5px;color:var(--sub);margin-top:2px}
+
+  /* ---------- 疤痕步骤 ---------- */
+  .scar{background:var(--warn-soft);border:1px solid #f6c89a;border-radius:12px;padding:11px 13px;margin-top:6px}
+  .scar h3{margin:0 0 6px;font-size:13.5px;color:var(--warn);display:flex;align-items:center;gap:6px}
+  .scar ol{margin:4px 0;padding-left:20px}
+  .scar li{font-size:12.5px;margin:3px 0;color:#7a4a16}
+
+  /* ---------- 按钮 ---------- */
+  .btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .btns button{flex:1;min-width:120px;border:1px solid #cbd5e0;background:#fff;color:var(--ink);
+    border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+  .btns button.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(31,111,139,.25)}
+  .btns button:active{transform:translateY(1px)}
+
+  /* ---------- 连续打卡 7日 ---------- */
+  .streak{display:flex;gap:6px;margin-top:4px;align-items:stretch}
+  .day{flex:1;min-width:0;text-align:center;font-size:10.5px;color:var(--sub)}
+  .day .dot{height:38px;border-radius:10px;background:#eef2f6;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:12px;font-weight:700;margin-top:3px;transition:.2s}
+  .day .dot.on{background:linear-gradient(135deg,var(--ok),#48c98a);box-shadow:0 3px 8px rgba(47,158,111,.3)}
+  .day .dot.part{background:#a7e0c4}
+  .day .dot.today{outline:2px solid var(--brand);outline-offset:1px}
+  .day .lab{color:var(--gold);font-weight:800}
+  .streak-lab{align-self:center;font-size:12px;color:var(--sub);margin-left:8px;white-space:nowrap}
+  .streak-lab b{color:var(--brand);font-size:15px}
+
+  /* ---------- 声明 / 页脚 ---------- */
+  .disclaimer{background:var(--warn-soft);border:1px solid #f6c89a;color:var(--warn);
+    border-radius:12px;padding:10px 13px;font-size:12px;margin-top:12px}
+  .disclaimer b{color:#9a4a10}
+  .foot{text-align:center;color:var(--sub);font-size:11px;margin-top:14px;line-height:1.6}
+  .foot a{color:var(--brand)}
+</style>
 </head>
-<body>
-<p style="font-family:sans-serif;text-align:center;margin-top:40px;color:#5b6b7b">
-  正在打开「剖腹产恢复打卡工作台」…<br>
-  若未自动跳转，请 <a href="%E5%89%A5%E8%85%B9%E4%BA%A7%E6%81%A2%E5%A4%8D%E6%89%93%E5%8D%A1%E5%B7%A5%E4%BD%9C%E5%8F%B0.html">点击这里</a>。
-</p>
+<body data-page-node-id="j5JCikzC5JELzt51YGHBTH">
+<div class="wrap" data-page-node-id="6ECRaoG5mZCZFdA6YUvfrL">
+
+<header data-page-node-id="VCAUmWJlYmZyOUV1B1nOUm">
+  <h1 data-page-node-id="cSawJYokn0dMdkswruWht5"><span class="em" data-page-node-id="gxnU93oyIhOfCqjvVFkc0x">🌸</span>剖腹产恢复 · 每日打卡工作台</h1>
+  <p data-page-node-id="BgCadUj1KHzYDgJ6diUlT1">按手术日自动判定恢复阶段 · 任务打卡本地保存 · 含防疤用药今日步骤</p>
+  <div class="hero-pills" data-page-node-id="a3ucOJlnUD8DTz7kmdp2DV">
+    <span class="hp" id="dayPill" data-page-node-id="4VfUiukFE7d3Yb4QS1QG8F">—</span>
+    <span class="hp" id="phasePill" data-page-node-id="eLbdC1ynmeeAE2Jaj37HBr">—</span>
+    <span class="hp gold" id="remPill" style="display:none" data-page-node-id="XbIG6BBtIIinHYo9GIULNB">📅 产检日</span>
+  </div>
+</header>
+
+<div class="overview" data-page-node-id="pt4QCDNFLUICMil0YrOWOY">
+  <div class="ring-wrap" data-page-node-id="R9QRSuT6FrKghGdp0kuBKm">
+    <svg class="ring" viewBox="0 0 120 120" width="96" height="96" data-page-node-id="rocX5D3qTA8gUwmON4JFIM">
+      <defs data-page-node-id="CAeUtejS0o1EcDcCJSaERA"><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1" data-page-node-id="AJTUwubYFl4TG52CoItsev">
+        <stop offset="0%" stop-color="#1f6f8b" data-page-node-id="bpOsjSinpZQsplhHCQpKOW"/><stop offset="100%" stop-color="#2c9bc0" data-page-node-id="gFYqk9VABUmo0HtKv6lJgY"/></linearGradient></defs>
+      <circle class="ring-bg" cx="60" cy="60" r="52" data-page-node-id="kPGQN0F3fDmxj1HFK62rhE"/>
+      <circle class="ring-fg" id="ringFg" cx="60" cy="60" r="52" data-page-node-id="uonFimLGSA9l96zQcZtNIm"/>
+    </svg>
+    <div class="ring-txt" data-page-node-id="D2GSK8n2EFFyMDjTl5vqFW"><b id="ringPct" data-page-node-id="EBZudwvsrGEPVRtNrMox2F">0%</b><span data-page-node-id="ie3aY5kznLCLXj4wLYZDgc">今日完成</span></div>
+  </div>
+  <div class="ov-stats" data-page-node-id="gMf4ry84VvgwqP0wISe6P1">
+    <div class="ov-row" data-page-node-id="GL4V6R8yeyARuFL8mV57Bz"><span class="k" data-page-node-id="7pgCFl9SNG06olBOzDauCu">打卡</span><span class="v" id="checkPill" data-page-node-id="6JnCwJEDBgjTIU15laIoHX">— / —</span></div>
+    <div class="ov-row" data-page-node-id="w4paPWWVVX5g9JeQgXCoOu"><span class="k" data-page-node-id="J1z1ZVKHvGO3FnMlbPH91z">连续</span><span class="v ok" id="streakPill" data-page-node-id="ZrVs5bgQyKeip51uZecri0">0 天</span></div>
+    <div class="ov-row" data-page-node-id="al3TmifhLHKcA7bmmF0k6k"><span class="k" data-page-node-id="sxq0IZDZZcwPrsdYT6sGw2">状态</span><span class="chip ok" id="stateChip" data-page-node-id="t3NEeiOtmGYMDJEJE9Ho4g">进行中</span></div>
+  </div>
+</div>
+
+<div class="sec controls" data-page-node-id="fjaBIs8OHkjZqBRCJqUHiE">
+  <div class="row" data-page-node-id="4GgmCMF6X42NQE6M7JQwMH">
+    <label data-page-node-id="5mWlPlElaqF2fEVYCmmoKo">手术日</label>
+    <input type="date" id="surgeryDate" value="2026-09-30" data-page-node-id="2gBeuccZopbPP7NrPmBRMA">
+    <label style="margin-left:6px" data-page-node-id="aHzqOP35hpQjVnEvIZHLku">查看日期</label>
+    <input type="date" id="viewDate" data-page-node-id="lhK5Rewhx1u3ySBmk4imwE">
+    <span class="link" id="todayBtn" data-page-node-id="4DrDTjmIB351SzMRaAGOs7">↩ 回到今日</span>
+  </div>
+  <div class="switch" id="phaseSwitch" data-page-node-id="kCLVeBuJVnNBlAOZGC7NhN"></div>
+</div>
+
+<div class="sec remind" id="remindSec" style="display:none" data-page-node-id="LwBxOW0ruGGmCz6jcWUDNh">
+  <h2 data-page-node-id="EYJ5vngmRThrKa7QCMXImM"><span class="n" data-page-node-id="yTQtrOXoICQhNP2Cjt4E7D">★</span><span id="remTitle" data-page-node-id="9t3K3KHENKCzKjmQprPHaC">产检提醒</span></h2>
+  <ul class="rlist" id="remList" data-page-node-id="Y4g9riue6AwoLRa2cAIK0v"></ul>
+  <label class="item" style="margin-top:8px;border-bottom:none;padding-bottom:0" data-page-node-id="cGziww7yCPry7BdeKs2HlS">
+    <input type="checkbox" id="remDone" data-page-node-id="F8n1oDQwN8ISoE0dCXcqAp">
+    <div class="t" id="remDoneLabel" data-page-node-id="vmF4kT3EbnwpNYpWm9mzof">我已按以上完成本次产检（勾选存档）</div>
+  </label>
+</div>
+
+<div class="sec" data-page-node-id="4aUdNiH5bGjkL2z9J36tIB">
+  <h2 data-page-node-id="EXGahvFUtm49n7IPJ3hlat"><span class="n" data-page-node-id="kYoTDs13rQW7MAlWVAJPB0">✓</span><span id="taskTitle" data-page-node-id="OdSUQOrl82u78iVoRzprvR">今日任务</span></h2>
+  <div id="tasks" data-page-node-id="fYtTMFigV2XpN0AKBr2YXv"></div>
+  <div class="scar" id="scarBox" style="display:none" data-page-node-id="sXt4hRC0wNZ7hrZbOIMCx2">
+    <h3 data-page-node-id="SB8stbuvDX0ltR1AqGcQuO">🩹 今日疤痕护理步骤</h3>
+    <ol id="scarSteps" data-page-node-id="oi7LwNk0JuGRCfpnpKllI3"></ol>
+  </div>
+  <div class="btns" data-page-node-id="82V2NigSi2HCMylY5E7UqC">
+    <button class="primary" id="allBtn" data-page-node-id="Uh4IES3ZLB5zdEDBgPaSJ9">全部完成</button>
+    <button id="clearBtn" data-page-node-id="Nkn8mTtQOHj2mArZApmiQL">清空今日</button>
+  </div>
+</div>
+
+<div class="sec" data-page-node-id="xeYcJnSwKarBjPtv3lAGL6">
+  <h2 data-page-node-id="HjJWG8opiQP2D9ePmdu4rB"><span class="n" data-page-node-id="hC3wrta5GQh8p1aFBNZuiR">🔥</span>连续打卡 · 近 7 日</h2>
+  <div class="streak" id="streak" data-page-node-id="LFNhm2YYHfjPyQlMVyehR8"></div>
+</div>
+
+<div class="disclaimer" id="disc" data-page-node-id="FC3mV72Vt3MN8Xk30LnW6b">
+  ⚠️ 本工作台为个人恢复提醒工具，内容整理自公开产后康复科普，<b data-page-node-id="veL36DJmUTPScdNDfYZirY">不构成医疗诊断</b>。运动强度、用药与游泳时机请以主治产科医生、麻醉科及康复师评估为准；出现红线信号（伤口感染、发热、腿麻无力、大小便异常等）请立即就医。
+</div>
+
+<div class="foot" data-page-node-id="wUIRxnzRM1eyLtrqlRvDa1">
+  数据仅保存在本机浏览器（localStorage），换设备 / 清缓存会丢失。<br data-page-node-id="NEGKKBSsaTcxX4PS27Up37">
+  外部访问版本同样为本地存储，跨设备数据不同步 · 整理 2026-09-14
+</div>
+
+</div>
+
+<script>
+/* ---------- 阶段与任务数据 ---------- */
+const PHASES = {
+  prep:{name:"术前准备（倒计时）", range:[-999, -1], badge:"术前", groups:[
+    {g:"医疗沟通", persist:true, items:[
+      {id:"tell_anes", t:"告知麻醉科脊柱病史（反弓+间盘突出）并带既往影像", note:"影响腰麻/硬膜外穿刺与术后腰痛风险"},
+      {id:"confirm_inc", t:"确认切口类型/缝合方式及出院后疤痕医嘱", note:""},
+      {id:"ask_meds", t:"问清术前需停用的药物/补剂（鱼油、活血中药等）", note:"以医院清单为准，勿自判"},
+      {id:"book_42", t:"预约产后42天复查", note:""},
+      {id:"scar_q", t:"若为瘢痕体质，问硅酮制剂启用时机", note:""}
+    ]},
+    {g:"身体准备", items:[
+      {id:"breath", t:"腹式呼吸 10×3 + 凯格尔 10–15×3", note:"术前建立腹横肌/盆底神经控制，术后恢复更快"},
+      {id:"walk", t:"维持散步 20–30 分钟", note:""},
+      {id:"nutrition", t:"优化蛋白(1.2–1.6g/kg)+维C+锌", note:"愈合营养储备"},
+      {id:"skin", t:"腹部皮肤保湿（不自己剃毛）", note:""},
+      {id:"neck", t:"颈椎复健（仅双下巴练习）", note:""}
+    ]},
+    {g:"居家环境", persist:true, items:[
+      {id:"height", t:"常用物移至腰部高度", note:"术后不弯腰不伸手"},
+      {id:"pillow", t:"备哺乳枕 / 腰靠", note:""},
+      {id:"binder", t:"备收腹带 + 硅酮疤痕贴/凝胶", note:""},
+      {id:"caregiver", t:"安排术后前2周主力看护人", note:""},
+      {id:"rollbed", t:"床边放扶手/矮凳，练滚转式起床", note:""},
+      {id:"stool", t:"备好产后可用的大便软化剂", note:"避免排便用力扯伤口/增椎间盘压"}
+    ]}
+  ], scar:null},
+
+  p1:{name:"阶段1 · 伤口急性期（0–2周）", range:[0,13], badge:"0–2周", groups:[
+    {g:"呼吸 / 盆底", items:[
+      {id:"breath", t:"腹式呼吸 10×3", note:""},
+      {id:"kegel", t:"凯格尔 10–15×3", note:""}
+    ]},
+    {g:"活动 / 防血栓", items:[
+      {id:"ankle", t:"床上踝泵（防血栓）", note:""},
+      {id:"roll", t:"滚转式翻身 / 起床", note:"绝不仰卧直接坐起"},
+      {id:"walk_in", t:"室内慢走 5–10 分钟", note:""}
+    ]},
+    {g:"伤口护理", items:[
+      {id:"dressing", t:"保持敷料干燥，按医嘱换药", note:""},
+      {id:"watch", t:"观察红肿/渗液/发热", note:"异常即就医"}
+    ]},
+    {g:"脊柱防护", items:[
+      {id:"side", t:"侧卧 + 双膝间夹枕", note:""},
+      {id:"press", t:"咳嗽/大笑/起身时手按伤口两侧", note:"减张力"}
+    ]},
+    {g:"营养 / 观察", items:[
+      {id:"water", t:"饮水 1.5–2 L", note:""},
+      {id:"observe", t:"红线自察（见声明/计划文档）", note:""}
+    ]}
+  ], scar:[
+    "保持敷料干燥，按医嘱换药，仅观察红肿/渗液/发热",
+    "暂不涂任何外用药；若医生开生长因子，清洁创面后薄涂/喷，上皮长好即停",
+    "束腹带暂不用（待拆线/医生许可后）"
+  ]},
+
+  p2:{name:"阶段2 · 愈合+轻活动（2–6周）", range:[14,41], badge:"2–6周", groups:[
+    {g:"呼吸 / 盆底", items:[
+      {id:"breath", t:"腹式呼吸 10×3", note:""},
+      {id:"kegel", t:"凯格尔 10–15×3", note:""}
+    ]},
+    {g:"活动", items:[
+      {id:"walk_out", t:"户外步行 20–30 分钟", note:""}
+    ]},
+    {g:"核心启动", items:[
+      {id:"ta", t:"腹横肌(TA)激活（呼气收腹向脊柱）", note:""},
+      {id:"tilt", t:"骨盆后倾 10×2", note:""},
+      {id:"wallpu", t:"靠墙俯卧撑 10×2", note:"练上肢不压腹"},
+      {id:"heat", t:"腰热敷 40℃×15min×2", note:""}
+    ]},
+    {g:"疤痕护理（伤口闭合后）", items:[
+      {id:"tape", t:"横贴减张贴/减张器（垂直跨越疤痕）", note:"减张优先于硅酮"},
+      {id:"silicone", t:"硅酮薄涂/贴（每日1–2次，按摩1–2min）", note:"需医生确认伤口已闭合"}
+    ]},
+    {g:"脊柱 / 观察", items:[
+      {id:"cat", t:"猫牛式轻柔伸展", note:""},
+      {id:"bridge", t:"臀桥（小幅度）", note:""},
+      {id:"observe", t:"红线自察", note:""}
+    ]}
+  ], scar:[
+    "确认伤口已闭合、无红肿渗液（医生评估后）",
+    "横贴减张贴/减张器：垂直跨越疤痕，每2–3天或松动时换",
+    "薄涂硅酮凝胶或贴硅酮贴 ≥12–24h/日，轻柔打圈按摩1–2分钟",
+    "束腹带白天≤8h（若用），夜间取下，松紧容1–2指"
+  ]},
+
+  p3:{name:"阶段3 · 疤痕松动+深层核心+试水（6–12周）", range:[42,83], badge:"6–12周", groups:[
+    {g:"呼吸 / 盆底", items:[
+      {id:"breath", t:"腹式呼吸 10×3", note:""},
+      {id:"kegel", t:"凯格尔 10–15×3", note:""}
+    ]},
+    {g:"活动", items:[
+      {id:"walk", t:"步行 20–30 分钟", note:""}
+    ]},
+    {g:"深层核心", items:[
+      {id:"deadbug", t:"死虫式", note:""},
+      {id:"birddog", t:"鸟狗式", note:""},
+      {id:"march", t:"仰卧/坐姿 march", note:""},
+      {id:"bridge2", t:"改良臀桥", note:"监控中线是否鼓包"}
+    ]},
+    {g:"疤痕护理", items:[
+      {id:"tape", t:"减张贴持续（至少到术后3个月）", note:""},
+      {id:"silicone", t:"硅酮膏/贴维持", note:""},
+      {id:"massage", t:"疤痕按摩：绕边缘→上疤痕 2–3次/日×2–3min", note:""}
+    ]},
+    {g:"脊柱 / 试水", items:[
+      {id:"heat", t:"腰热敷 40℃×15min", note:""},
+      {id:"aqua", t:"水中漫步/浅水舒展（需医生许可+恶露净）", note:"最早试水，非真正泳姿"}
+    ]},
+    {g:"游泳替代 / 交叉训练", items:[
+      {id:"alt_walk3", t:"快走替代（无法试水时）：平坦路线 20–30min", note:"收腹挺胸，避免挺腰代偿"},
+      {id:"alt_yoga3", t:"温和瑜伽：猫牛式、改良婴儿式、仰卧骨盆放松", note:"避开深前屈与负重扭转"}
+    ]},
+    {g:"观察", items:[
+      {id:"observe", t:"红线自察 + 复查腹直肌分离", note:""}
+    ]}
+  ], scar:[
+    "横贴减张贴持续（至少到术后3个月）",
+    "硅酮膏/贴维持，每日≥12–24h",
+    "疤痕按摩：先绕边缘2–3cm轻揉，再在疤痕上做松动，2–3次/日×2–3分钟",
+    "若医生许可+恶露净：水中漫步试水（水温30–32℃，有人陪，15分钟内）"
+  ]},
+
+  p4:{name:"阶段4 · 渐进力量+游泳复健（3–4月）", range:[84,119], badge:"3–4月", groups:[
+    {g:"呼吸 / 盆底", items:[
+      {id:"breath", t:"腹式呼吸 10×3", note:""},
+      {id:"kegel", t:"凯格尔 10–15×3", note:""}
+    ]},
+    {g:"核心进阶", items:[
+      {id:"sidecrunch", t:"侧卧位卷腹（腹直肌<2指才做）", note:""},
+      {id:"modplank", t:"改良平板（肚不鼓才做）", note:""}
+    ]},
+    {g:"疤痕护理", items:[
+      {id:"tape", t:"减张贴持续", note:""},
+      {id:"silicone", t:"硅酮维持", note:""}
+    ]},
+    {g:"游泳复健", items:[
+      {id:"swim", t:"自由泳/仰泳 20–30min ×2–3次/周", note:"暂避蛙泳蹬腿、禁蝶泳"}
+    ]},
+    {g:"游泳替代 / 交叉训练", items:[
+      {id:"alt_bike", t:"固定自行车/骑行台 20–30min（推荐靠背式）", note:"直立式需收腹挺胸不驼背"},
+      {id:"alt_walk", t:"快走 30–40min（配速稍快）", note:"核心微收，避免挺腰"},
+      {id:"alt_elliptical", t:"椭圆机 20–30min", note:"非负重低冲击，腰椎友好"},
+      {id:"alt_yoga", t:"瑜伽（脊柱友好）：微屈膝下犬、桥式、坐姿前屈改良", note:"避开深前屈/过伸与负重扭转"}
+    ]},
+    {g:"脊柱 / 观察", items:[
+      {id:"ext", t:"背伸/小飞燕（谨慎，听康复师）", note:""},
+      {id:"observe", t:"红线自察", note:""}
+    ]}
+  ], scar:[
+    "减张贴 + 硅酮维持",
+    "游泳复健：自由泳/仰泳 20–30min×2–3次/周（水温30–32℃）",
+    "疤痕按摩持续；防晒3–6月防色沉"
+  ]},
+
+  p5:{name:"阶段5 · 强化+规律游泳（4–6月）", range:[120,9999], badge:"4–6月", groups:[
+    {g:"核心强化", items:[
+      {id:"plank", t:"标准/侧平板（无 doming）", note:""},
+      {id:"antirot", t:"抗旋转训练", note:""}
+    ]},
+    {g:"疤痕护理", items:[
+      {id:"silicone", t:"硅酮维持至疤痕褪红", note:""},
+      {id:"tape_freq", t:"减张可逐步减频", note:""}
+    ]},
+    {g:"游泳", items:[
+      {id:"swim_full", t:"游泳回孕前量（蛙泳谨慎、蝶泳避免）", note:""}
+    ]},
+    {g:"游泳替代 / 交叉训练", items:[
+      {id:"alt_bike5", t:"固定自行车/骑行台 30–45min", note:"靠背式更佳，直立式不驼背"},
+      {id:"alt_walk5", t:"快走 40–50min（视腰椎耐受）", note:"出现腿麻/腰痛即减停"},
+      {id:"alt_elliptical5", t:"椭圆机 30min", note:"非负重低冲击"},
+      {id:"alt_yoga5", t:"瑜伽（脊柱友好）维持柔韧", note:"同阶段4禁忌"}
+    ]},
+    {g:"脊柱 / 观察", items:[
+      {id:"aqua_full", t:"游泳为主 + 陆上核心/臀桥维持", note:""},
+      {id:"observe", t:"红线自察 + 6月脊柱/盆底综合评估", note:""}
+    ]}
+  ], scar:[
+    "硅酮维持至疤痕不再充血（褪红）即可逐步停",
+    "游泳回孕前量；蛙泳谨慎、蝶泳避免",
+    "减张可逐步减频；若仍充血/隆起转整形/皮肤科"
+  ]}
+};
+
+/* ---------- 产检提醒（固定日期）---------- */
+const REMINDERS = {
+  '2026-09-18':{title:'产检提醒 · 术前12天', items:[
+    '常规产检：宫高/腹围、胎心监护(NST)、血压+尿蛋白',
+    '携带既往脊柱影像（反弓+间盘突出 MRI/CT），衔接麻醉科术前评估',
+    '确认 B族链球菌(GBS)筛查安排/结果',
+    '复核血常规、凝血功能（为 9/30 手术备参考）',
+    '评估胎位与宫颈条件，记录基线'
+  ]},
+  '2026-09-25':{title:'产检提醒 · 术前5天', items:[
+    '常规产检：NST、血压+尿蛋白',
+    '与产科+麻醉科最终敲定 9/30 手术流程、禁食时间、切口/缝合方式',
+    '确认术前皮试/备血，停用活血补剂与鱼油',
+    '待产包+术后用品就位（收腹带、硅酮凝胶/贴、减张贴）',
+    '告知团队瘢痕体质情况（如适用），明确疤痕医嘱'
+  ]}
+};
+
+/* ---------- 工具 ---------- */
+function ymd(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),da=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+da;}
+function parseD(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function phaseFor(days){if(days<0)return 'prep';const order=['p1','p2','p3','p4','p5'];
+  for(const k of order){const [a,b]=PHASES[k].range;if(days>=a&&days<=b)return k;}return 'p5';}
+function storeKey(dateStr){return 'cs_rec_'+dateStr;}
+function loadRec(dateStr){try{return JSON.parse(localStorage.getItem(storeKey(dateStr))||'{}');}catch(e){return{};}}
+function saveRec(dateStr,obj){localStorage.setItem(storeKey(dateStr),JSON.stringify(obj));}
+function loadPersist(){try{return JSON.parse(localStorage.getItem('cs_prep_persist')||'{}');}catch(e){return{};}}
+function savePersist(obj){localStorage.setItem('cs_prep_persist',JSON.stringify(obj));}
+
+/* ---------- 连续打卡天数（仅每日打卡分组）---------- */
+function computeStreak(){
+  const sd=parseD(surgeryDate); let streak=0; let cur=parseD(viewDate);
+  while(true){
+    const ds=ymd(cur);
+    if(ds<surgeryDate)break;
+    const pk=phaseFor(Math.round((cur-sd)/86400000));
+    const rec=loadRec(ds);
+    let dailyDone=0;
+    PHASES[pk].groups.forEach(g=>{ if(g.persist) return; g.items.forEach(it=>{ if(rec[it.id])dailyDone++; }); });
+    if(dailyDone>0)streak++; else break;
+    cur=new Date(cur.getTime()-86400000);
+    if(streak>400)break;
+  }
+  return streak;
+}
+
+/* ---------- 状态 ---------- */
+let surgeryDate='2026-09-30';
+let viewDate=ymd(new Date());
+const REAL_TODAY=ymd(new Date());
+const RING_C=326.726;
+
+/* ---------- 渲染 ---------- */
+function render(){
+  const sd=parseD(surgeryDate), vd=parseD(viewDate);
+  const days=Math.round((vd-sd)/86400000);
+  const pk=phaseFor(days);
+  const ph=PHASES[pk];
+
+  // 状态条
+  document.getElementById('dayPill').textContent = days<0 ? ('距手术 '+Math.abs(days)+' 天') : ('术后第 '+days+' 天');
+  document.getElementById('phasePill').textContent = ph.badge;
+
+  // 产检提醒
+  const rem=REMINDERS[viewDate];
+  const remSec=document.getElementById('remindSec');
+  const remPill=document.getElementById('remPill');
+  if(rem){
+    remSec.style.display='block';
+    document.getElementById('remTitle').textContent=rem.title+'（'+viewDate+'）';
+    const ol=document.getElementById('remList'); ol.innerHTML='';
+    rem.items.forEach(s=>{const li=document.createElement('li');li.textContent=s;ol.appendChild(li);});
+    const rec2=JSON.parse(localStorage.getItem('cs_rem_'+viewDate)||'{}');
+    const cb=document.getElementById('remDone'); cb.checked=!!rec2.done;
+    cb.onchange=()=>{localStorage.setItem('cs_rem_'+viewDate,JSON.stringify({done:cb.checked}));render();};
+    remPill.style.display='inline-block';
+  } else { remSec.style.display='none'; remPill.style.display='none'; }
+
+  const rec=loadRec(viewDate);
+  const persistMap=loadPersist();
+  let total=0, done=0;
+  ph.groups.forEach(g=>g.items.forEach(it=>{total++; const st=g.persist?persistMap[it.id]:rec[it.id]; if(st)done++;}));
+  const pct= total? Math.round(done/total*100):0;
+
+  // 环形进度
+  const ring=document.getElementById('ringFg');
+  ring.style.strokeDashoffset = RING_C*(1-pct/100);
+  ring.classList.toggle('done', pct===100);
+  document.getElementById('ringPct').textContent = pct+'%';
+
+  // 概览统计
+  document.getElementById('checkPill').textContent = done+' / '+total;
+  const streak=computeStreak();
+  document.getElementById('streakPill').textContent = streak+' 天';
+  const stateChip=document.getElementById('stateChip');
+  if(pct===100){stateChip.textContent='今日已完成 ✓';stateChip.className='chip ok';}
+  else if(pct>0){stateChip.textContent='进行中';stateChip.className='chip warn';}
+  else {stateChip.textContent='待开始';stateChip.className='chip';stateChip.style.background='#eef2f6';stateChip.style.color='var(--sub)';}
+
+  // 任务标题
+  document.getElementById('taskTitle').textContent = ph.name + (viewDate===REAL_TODAY?'':'（查看 '+viewDate+'）');
+
+  // 任务列表
+  const box=document.getElementById('tasks'); box.innerHTML='';
+  ph.groups.forEach(g=>{
+    const gt=document.createElement('div'); gt.className='gtitle';
+    gt.innerHTML=g.g+(g.persist?' <span class="tag">一次性</span>':'');
+    box.appendChild(gt);
+    g.items.forEach(it=>{
+      const isPersist=!!g.persist;
+      const checked=isPersist?!!persistMap[it.id]:!!rec[it.id];
+      const row=document.createElement('label'); row.className='item'+(checked?' done':'');
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=checked;
+      cb.onchange=()=>{
+        if(isPersist){const pm=loadPersist(); pm[it.id]=cb.checked; if(!cb.checked)delete pm[it.id]; savePersist(pm);}
+        else {const r=loadRec(viewDate); r[it.id]=cb.checked; if(!cb.checked)delete r[it.id]; saveRec(viewDate,r);}
+        render();
+      };
+      const tx=document.createElement('div');
+      tx.innerHTML='<div class="t">'+it.t+'</div>'+(it.note?'<div class="note">'+it.note+'</div>':'');
+      row.appendChild(cb); row.appendChild(tx); box.appendChild(row);
+    });
+  });
+
+  // 疤痕步骤
+  const sb=document.getElementById('scarBox');
+  if(ph.scar){sb.style.display='block'; const ol=document.getElementById('scarSteps'); ol.innerHTML='';
+    ph.scar.forEach(s=>{const li=document.createElement('li');li.textContent=s;ol.appendChild(li);});
+  } else {sb.style.display='none';}
+
+  // 阶段切换条
+  const sw=document.getElementById('phaseSwitch'); sw.innerHTML='';
+  const allKeys=['prep','p1','p2','p3','p4','p5'];
+  allKeys.forEach(k=>{
+    const b=document.createElement('button'); b.textContent=PHASES[k].badge;
+    if(k===pk)b.classList.add('active');
+    b.onclick=()=>{const [a,b2]=PHASES[k].range; let target;
+      if(k==='prep')target=ymd(new Date(sd.getTime()-2*86400000));
+      else if(k==='p5')target=ymd(new Date(sd.getTime()+140*86400000));
+      else{const mid=Math.floor((a+b2)/2); target=ymd(new Date(sd.getTime()+mid*86400000));}
+      viewDate=target; document.getElementById('viewDate').value=target; render();
+    };
+    sw.appendChild(b);
+  });
+
+  // 连续打卡 + 7日
+  renderStreak();
+}
+
+function renderStreak(){
+  const sd=parseD(surgeryDate);
+  const grid=document.getElementById('streak'); grid.innerHTML='';
+  for(let i=6;i>=0;i--){
+    const d=new Date(parseD(viewDate).getTime()-i*86400000);
+    const ds=ymd(d);
+    const pk=phaseFor(Math.round((d-sd)/86400000));
+    const ph=PHASES[pk];
+    let total=0; const rec=loadRec(ds); const pm2=loadPersist();
+    ph.groups.forEach(g=>g.items.forEach(it=>total++));
+    let done=0; ph.groups.forEach(g=>g.items.forEach(it=>{const st=g.persist?pm2[it.id]:rec[it.id]; if(st)done++;}));
+    const cell=document.createElement('div'); cell.className='day';
+    const pct= total? Math.round(done/total*100):0;
+    let cls='dot';
+    if(ds<surgeryDate) cls+=' ';
+    else if(pct>=100)cls+=' on'; else if(pct>0)cls+=' part';
+    if(i===0)cls+=' today';
+    const isRem=!!REMINDERS[ds];
+    const label=(i===0?'今':(d.getMonth()+1)+'/'+d.getDate()) + (isRem?' 检':'');
+    const labStyle=isRem?' class="lab"':'';
+    cell.innerHTML='<div'+labStyle+'>'+label+'</div><div class="'+cls+'">'+(ds<surgeryDate?'·':(pct>0?pct:'·'))+'</div>';
+    cell.style.cursor='pointer';
+    cell.onclick=()=>{viewDate=ds;document.getElementById('viewDate').value=ds;render();};
+    grid.appendChild(cell);
+  }
+  const lab=document.createElement('div'); lab.className='streak-lab';
+  lab.innerHTML='连续 <b>'+computeStreak()+'</b> 天';
+  grid.appendChild(lab);
+}
+
+/* ---------- 事件 ---------- */
+document.getElementById('surgeryDate').addEventListener('change',e=>{
+  surgeryDate=e.target.value; localStorage.setItem('cs_surgery_date',surgeryDate);
+  if(parseD(viewDate)<parseD(surgeryDate)) viewDate=surgeryDate;
+  document.getElementById('viewDate').value=viewDate; render();
+});
+document.getElementById('viewDate').addEventListener('change',e=>{viewDate=e.target.value;render();});
+document.getElementById('todayBtn').onclick=()=>{viewDate=REAL_TODAY;document.getElementById('viewDate').value=viewDate;render();};
+document.getElementById('allBtn').onclick=()=>{const ph=PHASES[phaseFor(Math.round((parseD(viewDate)-parseD(surgeryDate))/86400000))];const r=loadRec(viewDate);const pm=loadPersist();ph.groups.forEach(g=>g.items.forEach(it=>{if(g.persist)pm[it.id]=true;else r[it.id]=true;}));saveRec(viewDate,r);savePersist(pm);render();};
+document.getElementById('clearBtn').onclick=()=>{const ph=PHASES[phaseFor(Math.round((parseD(viewDate)-parseD(surgeryDate))/86400000))];const r=loadRec(viewDate);ph.groups.forEach(g=>{if(!g.persist)g.items.forEach(it=>delete r[it.id]);});saveRec(viewDate,r);render();};
+document.getElementById('disc').style.display='block';
+
+/* ---------- 初始化 ---------- */
+const saved=localStorage.getItem('cs_surgery_date');
+if(saved)surgeryDate=saved;
+document.getElementById('surgeryDate').value=surgeryDate;
+document.getElementById('viewDate').value=viewDate;
+render();
+</script>
 </body>
 </html>
