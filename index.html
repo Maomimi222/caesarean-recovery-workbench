@@ -434,7 +434,7 @@ function computeStreak(){
   const sd=parseD(surgeryDate); let streak=0; let cur=parseD(viewDate);
   while(true){
     const ds=ymd(cur);
-    if(ds<surgeryDate)break;
+    if(ds>REAL_TODAY)break;
     const pk=phaseFor(Math.round((cur-sd)/86400000));
     const rec=loadRec(ds);
     let dailyDone=0;
@@ -563,13 +563,13 @@ function renderStreak(){
     const cell=document.createElement('div'); cell.className='day';
     const pct= total? Math.round(done/total*100):0;
     let cls='dot';
-    if(ds<surgeryDate) cls+=' ';
+    if(ds>REAL_TODAY) cls+=' ';
     else if(pct>=100)cls+=' on'; else if(pct>0)cls+=' part';
     if(i===0)cls+=' today';
     const isRem=!!REMINDERS[ds];
     const label=(i===0?'今':(d.getMonth()+1)+'/'+d.getDate()) + (isRem?' 检':'');
     const labStyle=isRem?' class="lab"':'';
-    cell.innerHTML='<div'+labStyle+'>'+label+'</div><div class="'+cls+'">'+(ds<surgeryDate?'·':(pct>0?pct:'·'))+'</div>';
+    cell.innerHTML='<div'+labStyle+'>'+label+'</div><div class="'+cls+'">'+(ds>REAL_TODAY?'·':(pct>0?pct:'·'))+'</div>';
     cell.style.cursor='pointer';
     cell.onclick=()=>{viewDate=ds;document.getElementById('viewDate').value=ds;render();};
     grid.appendChild(cell);
