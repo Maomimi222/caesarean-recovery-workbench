@@ -121,7 +121,7 @@
   .day .dot{height:38px;border-radius:10px;background:#eef2f6;display:flex;align-items:center;justify-content:center;
     color:#fff;font-size:12px;font-weight:700;margin-top:3px;transition:.2s}
   .day .dot.on{background:linear-gradient(135deg,var(--ok),#48c98a);box-shadow:0 3px 8px rgba(47,158,111,.3)}
-  .day .dot.part{background:#a7e0c4}
+  .day .dot.part{background:#7fd3a6;color:#0c5a37}
   .day .dot.today{outline:2px solid var(--brand);outline-offset:1px}
   .day .lab{color:var(--gold);font-weight:800}
   .streak-lab{align-self:center;font-size:12px;color:var(--sub);margin-left:8px;white-space:nowrap}
@@ -168,7 +168,7 @@
 <div class="sec controls" data-page-node-id="fjaBIs8OHkjZqBRCJqUHiE">
   <div class="row" data-page-node-id="4GgmCMF6X42NQE6M7JQwMH">
     <label data-page-node-id="5mWlPlElaqF2fEVYCmmoKo">手术日</label>
-    <input type="date" id="surgeryDate" value="2026-09-30" data-page-node-id="2gBeuccZopbPP7NrPmBRMA">
+    <input type="date" id="surgeryDate" value="2026-09-25" data-page-node-id="2gBeuccZopbPP7NrPmBRMA">
     <label style="margin-left:6px" data-page-node-id="aHzqOP35hpQjVnEvIZHLku">查看日期</label>
     <input type="date" id="viewDate" data-page-node-id="lhK5Rewhx1u3ySBmk4imwE">
     <span class="link" id="todayBtn" data-page-node-id="4DrDTjmIB351SzMRaAGOs7">↩ 回到今日</span>
@@ -224,7 +224,7 @@ const PHASES = {
       {id:"confirm_inc", t:"确认切口类型/缝合方式及出院后疤痕医嘱", note:""},
       {id:"ask_meds", t:"问清术前需停用的药物/补剂（鱼油、活血中药等）", note:"以医院清单为准，勿自判"},
       {id:"book_42", t:"预约产后42天复查", note:""},
-      {id:"scar_q", t:"若为瘢痕体质/二胎原切口，问硅酮与减张启用时机", note:"二次切开同处，防增生更要早"}
+      {id:"scar_q", t:"若为瘢痕体质/二胎原切口，问硅酮启用时机", note:"二次切开同处，防增生更要早"}
     ]},
     {g:"身体准备", items:[
       {id:"breath", t:"腹式呼吸 10×3 + 凯格尔 10–15×3", note:"术前建立腹横肌/盆底神经控制，术后恢复更快"},
@@ -236,7 +236,7 @@ const PHASES = {
     {g:"居家环境", persist:true, items:[
       {id:"height", t:"常用物移至腰部高度", note:"术后不弯腰不伸手"},
       {id:"pillow", t:"备哺乳枕 / 腰靠", note:""},
-      {id:"binder", t:"备收腹带 + 硅酮疤痕贴/凝胶", note:""},
+      {id:"binder", t:"备收腹带 + 硅酮疤痕贴/凝胶", note:"产后1个月内可按需用，吃饭/睡觉取下"},
       {id:"caregiver", t:"安排术后前2周主力看护人", note:""},
       {id:"rollbed", t:"床边放扶手/矮凳，练滚转式起床", note:""},
       {id:"stool", t:"备好产后可用的大便软化剂", note:"避免排便用力扯伤口/增腹压"}
@@ -249,6 +249,7 @@ const PHASES = {
       {id:"kegel", t:"凯格尔 10–15×3", note:""}
     ]},
     {g:"活动 / 防血栓", items:[
+      {id:"heparin", t:"遵医嘱注射低分子肝素（防血栓）", note:"产后前 3 天按医嘱每日注射，勿自行停用"},
       {id:"ankle", t:"床上踝泵（防血栓）", note:""},
       {id:"roll", t:"滚转式翻身 / 起床", note:"绝不仰卧直接坐起"},
       {id:"walk_in", t:"室内慢走 5–10 分钟", note:""}
@@ -269,7 +270,7 @@ const PHASES = {
   ], scar:[
     "保持敷料干燥，按医嘱换药，仅观察红肿/渗液/发热",
     "暂不涂任何外用药；若医生开生长因子，清洁创面后薄涂/喷，上皮长好即停",
-    "束腹带暂不用（待拆线/医生许可后）"
+    "束腹带：产后 1 个月内均可按需使用，吃饭/睡觉时摘下即可"
   ]},
 
   p2:{name:"阶段2 · 愈合+轻活动（2–6周）", range:[14,41], badge:"2–6周", groups:[
@@ -287,7 +288,6 @@ const PHASES = {
       {id:"heat", t:"颈肩热敷 40℃×15min×2", note:"缓解颈椎僵硬"}
     ]},
     {g:"疤痕护理（伤口闭合后）", items:[
-      {id:"tape", t:"横贴减张贴/减张器（垂直跨越疤痕）", note:"减张优先于硅酮"},
       {id:"silicone", t:"硅酮薄涂/贴（每日1–2次，按摩1–2min）", note:"需医生确认伤口已闭合"}
     ]},
     {g:"颈椎 / 观察", items:[
@@ -297,9 +297,8 @@ const PHASES = {
     ]}
   ], scar:[
     "确认伤口已闭合、无红肿渗液（医生评估后）",
-    "横贴减张贴/减张器：垂直跨越疤痕，每2–3天或松动时换",
     "薄涂硅酮凝胶或贴硅酮贴 ≥12–24h/日，轻柔打圈按摩1–2分钟",
-    "束腹带白天≤8h（若用），夜间取下，松紧容1–2指"
+    "束腹带：产后 1 个月内均可按需使用，吃饭/睡觉时摘下（松紧容 1–2 指）"
   ]},
 
   p3:{name:"阶段3 · 疤痕松动+深层核心+试水（6–12周）", range:[42,83], badge:"6–12周", groups:[
@@ -317,7 +316,6 @@ const PHASES = {
       {id:"bridge2", t:"改良臀桥", note:"监控中线是否鼓包"}
     ]},
     {g:"疤痕护理", items:[
-      {id:"tape", t:"减张贴持续（至少到术后3个月）", note:""},
       {id:"silicone", t:"硅酮膏/贴维持", note:""},
       {id:"massage", t:"疤痕按摩：绕边缘→上疤痕 2–3次/日×2–3min", note:""}
     ]},
@@ -333,7 +331,6 @@ const PHASES = {
       {id:"observe", t:"红线自察 + 复查腹直肌分离", note:""}
     ]}
   ], scar:[
-    "横贴减张贴持续（至少到术后3个月）",
     "硅酮膏/贴维持，每日≥12–24h",
     "疤痕按摩：先绕边缘2–3cm轻揉，再在疤痕上做松动，2–3次/日×2–3分钟",
     "若医生许可+恶露净：水中漫步试水（水温30–32℃，有人陪，15分钟内）"
@@ -349,7 +346,6 @@ const PHASES = {
       {id:"modplank", t:"改良平板（肚不鼓才做）", note:""}
     ]},
     {g:"疤痕护理", items:[
-      {id:"tape", t:"减张贴持续", note:""},
       {id:"silicone", t:"硅酮维持", note:""}
     ]},
     {g:"游泳复健", items:[
@@ -366,7 +362,7 @@ const PHASES = {
       {id:"observe", t:"红线自察", note:""}
     ]}
   ], scar:[
-    "减张贴 + 硅酮维持",
+    "硅酮维持至疤痕褪红（坚持 3–6 月）",
     "游泳复健：自由泳/仰泳 20–30min×2–3次/周（水温30–32℃）",
     "疤痕按摩持续；防晒3–6月防色沉"
   ]},
@@ -377,8 +373,7 @@ const PHASES = {
       {id:"antirot", t:"抗旋转训练", note:""}
     ]},
     {g:"疤痕护理", items:[
-      {id:"silicone", t:"硅酮维持至疤痕褪红", note:""},
-      {id:"tape_freq", t:"减张可逐步减频", note:""}
+      {id:"silicone", t:"硅酮维持至疤痕褪红", note:""}
     ]},
     {g:"游泳", items:[
       {id:"swim_full", t:"游泳回孕前量（蛙泳换气谨慎、蝶泳避免）", note:""}
@@ -396,25 +391,32 @@ const PHASES = {
   ], scar:[
     "硅酮维持至疤痕不再充血（褪红）即可逐步停",
     "游泳回孕前量；蛙泳换气谨慎、蝶泳避免",
-    "减张可逐步减频；若仍充血/隆起转整形/皮肤科"
+    "若仍充血/隆起/硬痛 → 转整形/皮肤科"
   ]}
 };
 
 /* ---------- 产检提醒（固定日期）---------- */
 const REMINDERS = {
-  '2026-09-18':{title:'产检提醒 · 术前12天', items:[
+  '2026-09-18':{title:'产检提醒 · 术前7天', items:[
     '常规产检：宫高/腹围、胎心监护(NST)、血压+尿蛋白',
     '携带一胎剖腹产手术记录/出院小结，确认二次剖腹产沿用原切口方案',
     '确认 B族链球菌(GBS)筛查安排/结果',
-    '复核血常规、凝血功能（为 9/30 手术备参考）',
+    '复核血常规、凝血功能（为 9/25 手术备参考）',
     '评估胎位与宫颈条件，记录基线'
   ]},
-  '2026-09-24':{title:'产检提醒 · 术前6天', items:[
+  '2026-09-24':{title:'产检提醒 · 术前1天', items:[
     '常规产检：NST、血压+尿蛋白',
     '与产科确认二次剖腹产（原疤痕处切口）流程、禁食、缝合方式',
     '确认术前皮试/备血，停用活血补剂与鱼油',
-    '待产包+术后用品就位（收腹带、硅酮凝胶/贴、减张贴）',
+    '待产包+术后用品就位（收腹带、硅酮凝胶/贴）',
     '告知团队：瘢痕体质（如有）+ 二胎原切口，明确防疤与缝合医嘱'
+  ]},
+  '2026-11-13':{title:'产后复查提醒 · 42天', items:[
+    '产科 42 天复查：子宫复旧、恶露、伤口愈合情况',
+    '⭐ 询问恢复游泳：伤口是否已完全愈合、可从何时开始水中漫步 / 浅水舒展',
+    '确认疤痕已闭合无红肿，可开始疤痕按摩与硅酮护理',
+    '评估腹直肌分离（几指），必要时转介女性健康 / 盆底康复',
+    '讨论运动进阶的安全边界与避孕方式'
   ]}
 };
 
@@ -447,7 +449,7 @@ function computeStreak(){
 }
 
 /* ---------- 状态 ---------- */
-let surgeryDate='2026-09-30';
+let surgeryDate='2026-09-25';
 let viewDate=ymd(new Date());
 const REAL_TODAY=ymd(new Date());
 const RING_C=326.726;
@@ -581,7 +583,7 @@ function renderStreak(){
 
 /* ---------- 事件 ---------- */
 document.getElementById('surgeryDate').addEventListener('change',e=>{
-  surgeryDate=e.target.value; localStorage.setItem('cs_surgery_date',surgeryDate);
+  surgeryDate=e.target.value; localStorage.setItem('cs_surgery_date_v2',surgeryDate);
   if(parseD(viewDate)<parseD(surgeryDate)) viewDate=surgeryDate;
   document.getElementById('viewDate').value=viewDate; render();
 });
@@ -592,7 +594,7 @@ document.getElementById('clearBtn').onclick=()=>{const ph=PHASES[phaseFor(Math.r
 document.getElementById('disc').style.display='block';
 
 /* ---------- 初始化 ---------- */
-const saved=localStorage.getItem('cs_surgery_date');
+const saved=localStorage.getItem('cs_surgery_date_v2');
 if(saved)surgeryDate=saved;
 document.getElementById('surgeryDate').value=surgeryDate;
 document.getElementById('viewDate').value=viewDate;
