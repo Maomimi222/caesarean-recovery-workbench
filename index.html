@@ -249,7 +249,7 @@ const PHASES = {
       {id:"kegel", t:"凯格尔 10–15×3", note:""}
     ]},
     {g:"活动 / 防血栓", items:[
-      {id:"heparin", t:"遵医嘱注射低分子肝素（防血栓）", note:"产后前 3 天按医嘱每日注射，勿自行停用"},
+      {id:"heparin", t:"遵医嘱注射低分子肝素（防血栓）", note:"仅术后第 3–5 天按医嘱注射，之后停用；勿自行增减"},
       {id:"ankle", t:"床上踝泵（防血栓）", note:""},
       {id:"roll", t:"滚转式翻身 / 起床", note:"绝不仰卧直接坐起"},
       {id:"walk_in", t:"室内慢走 5–10 分钟", note:""}
@@ -264,7 +264,7 @@ const PHASES = {
       {id:"neck_post", t:"手机/哺乳用支架，避免低头前倾", note:"颈椎反弓者重点防护"}
     ]},
     {g:"营养 / 观察", items:[
-      {id:"water", t:"饮水 1.5–2 L", note:""},
+      {id:"water", t:"饮水 2.3–2.5 L", note:"哺乳期需水量偏多，少量多次、别等口渴"},
       {id:"observe", t:"红线自察（见声明/计划文档）", note:""}
     ]}
   ], scar:[
@@ -289,6 +289,9 @@ const PHASES = {
     ]},
     {g:"疤痕护理（伤口闭合后）", items:[
       {id:"silicone", t:"硅酮薄涂/贴（每日1–2次，按摩1–2min）", note:"需医生确认伤口已闭合"}
+    ]},
+    {g:"营养 / 饮水", items:[
+      {id:"water", t:"饮水 ~2 L", note:"哺乳期需水偏多，少量多次"}
     ]},
     {g:"颈椎 / 观察", items:[
       {id:"cat", t:"猫牛式轻柔伸展（颈腰同益）", note:""},
@@ -327,6 +330,9 @@ const PHASES = {
       {id:"alt_walk3", t:"快走替代（无法试水时）：平坦路线 20–30min", note:"收腹挺胸，避免挺腰/低头代偿"},
       {id:"alt_yoga3", t:"温和瑜伽：猫牛式、改良婴儿式、仰卧骨盆放松", note:"避开深前屈与负重扭转"}
     ]},
+    {g:"营养 / 饮水", items:[
+      {id:"water", t:"饮水 ~2 L", note:"哺乳期需水偏多，少量多次"}
+    ]},
     {g:"观察", items:[
       {id:"observe", t:"红线自察 + 复查腹直肌分离", note:""}
     ]}
@@ -357,6 +363,9 @@ const PHASES = {
       {id:"alt_elliptical", t:"椭圆机 20–30min", note:"非负重低冲击，脊柱友好"},
       {id:"alt_yoga", t:"瑜伽（脊柱友好）：微屈膝下犬、桥式、坐姿前屈改良", note:"避开深前屈/过伸与负重扭转"}
     ]},
+    {g:"营养 / 饮水", items:[
+      {id:"water", t:"饮水 ~2 L", note:"哺乳期需水偏多，少量多次"}
+    ]},
     {g:"颈椎 / 观察", items:[
       {id:"ext", t:"颈椎深层肌训练（收下巴、肩胛后缩），避低头久坐", note:""},
       {id:"observe", t:"红线自察", note:""}
@@ -384,6 +393,9 @@ const PHASES = {
       {id:"alt_elliptical5", t:"椭圆机 30min", note:"非负重低冲击"},
       {id:"alt_yoga5", t:"瑜伽（脊柱友好）维持柔韧", note:"同阶段4禁忌"}
     ]},
+    {g:"营养 / 饮水", items:[
+      {id:"water", t:"饮水 ~2 L", note:"哺乳期需水偏多，少量多次"}
+    ]},
     {g:"颈椎 / 观察", items:[
       {id:"aqua_full", t:"游泳为主 + 陆上核心/臀桥维持", note:""},
       {id:"observe", t:"红线自察 + 6月颈椎/盆底综合评估", note:""}
@@ -394,6 +406,11 @@ const PHASES = {
     "若仍充血/隆起/硬痛 → 转整形/皮肤科"
   ]}
 };
+
+/* ---------- 仅特定术后日出现的项目 ---------- */
+/* 低分子肝素：仅术后第 3–5 天需要（9/25 手术 → 9/28–9/30），之后不再出现 */
+const DAY_LIMITED = { heparin:[3,4,5] };
+function itemVisible(it, days){ const lim=DAY_LIMITED[it.id]; return !lim || lim.includes(days); }
 
 /* ---------- 产检提醒（固定日期）---------- */
 const REMINDERS = {
@@ -483,7 +500,7 @@ function render(){
   const rec=loadRec(viewDate);
   const persistMap=loadPersist();
   let total=0, done=0;
-  ph.groups.forEach(g=>g.items.forEach(it=>{total++; const st=g.persist?persistMap[it.id]:rec[it.id]; if(st)done++;}));
+  ph.groups.forEach(g=>g.items.forEach(it=>{if(!itemVisible(it,days))return; total++; const st=g.persist?persistMap[it.id]:rec[it.id]; if(st)done++;}));
   const pct= total? Math.round(done/total*100):0;
 
   // 环形进度
@@ -511,6 +528,7 @@ function render(){
     gt.innerHTML=g.g+(g.persist?' <span class="tag">一次性</span>':'');
     box.appendChild(gt);
     g.items.forEach(it=>{
+      if(!itemVisible(it,days))return;
       const isPersist=!!g.persist;
       const checked=isPersist?!!persistMap[it.id]:!!rec[it.id];
       const row=document.createElement('label'); row.className='item'+(checked?' done':'');
@@ -557,11 +575,12 @@ function renderStreak(){
   for(let i=6;i>=0;i--){
     const d=new Date(parseD(viewDate).getTime()-i*86400000);
     const ds=ymd(d);
-    const pk=phaseFor(Math.round((d-sd)/86400000));
+    const dd=Math.round((d-sd)/86400000);
+    const pk=phaseFor(dd);
     const ph=PHASES[pk];
     let total=0; const rec=loadRec(ds); const pm2=loadPersist();
-    ph.groups.forEach(g=>g.items.forEach(it=>total++));
-    let done=0; ph.groups.forEach(g=>g.items.forEach(it=>{const st=g.persist?pm2[it.id]:rec[it.id]; if(st)done++;}));
+    ph.groups.forEach(g=>g.items.forEach(it=>{if(itemVisible(it,dd))total++;}));
+    let done=0; ph.groups.forEach(g=>g.items.forEach(it=>{if(!itemVisible(it,dd))return; const st=g.persist?pm2[it.id]:rec[it.id]; if(st)done++;}));
     const cell=document.createElement('div'); cell.className='day';
     const pct= total? Math.round(done/total*100):0;
     let cls='dot';
@@ -589,7 +608,7 @@ document.getElementById('surgeryDate').addEventListener('change',e=>{
 });
 document.getElementById('viewDate').addEventListener('change',e=>{viewDate=e.target.value;render();});
 document.getElementById('todayBtn').onclick=()=>{viewDate=REAL_TODAY;document.getElementById('viewDate').value=viewDate;render();};
-document.getElementById('allBtn').onclick=()=>{const ph=PHASES[phaseFor(Math.round((parseD(viewDate)-parseD(surgeryDate))/86400000))];const r=loadRec(viewDate);const pm=loadPersist();ph.groups.forEach(g=>g.items.forEach(it=>{if(g.persist)pm[it.id]=true;else r[it.id]=true;}));saveRec(viewDate,r);savePersist(pm);render();};
+document.getElementById('allBtn').onclick=()=>{const daysNow=Math.round((parseD(viewDate)-parseD(surgeryDate))/86400000);const ph=PHASES[phaseFor(daysNow)];const r=loadRec(viewDate);const pm=loadPersist();ph.groups.forEach(g=>g.items.forEach(it=>{if(!itemVisible(it,daysNow))return;if(g.persist)pm[it.id]=true;else r[it.id]=true;}));saveRec(viewDate,r);savePersist(pm);render();};
 document.getElementById('clearBtn').onclick=()=>{const ph=PHASES[phaseFor(Math.round((parseD(viewDate)-parseD(surgeryDate))/86400000))];const r=loadRec(viewDate);ph.groups.forEach(g=>{if(!g.persist)g.items.forEach(it=>delete r[it.id]);});saveRec(viewDate,r);render();};
 document.getElementById('disc').style.display='block';
 
